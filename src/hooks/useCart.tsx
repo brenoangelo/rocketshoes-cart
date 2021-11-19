@@ -76,6 +76,15 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
   const removeProduct = (productId: number) => {
     try {
       // TODO
+      const updatedCart = Array.from(cart)
+      
+      const productIndex = updatedCart.findIndex(product => product.id === productId)
+
+      updatedCart.splice(productIndex, 1)
+      
+      localStorage.setItem('@RocketShoes:cart', JSON.stringify(updatedCart));
+      setCart(updatedCart)
+
     } catch {
       // TODO
     }

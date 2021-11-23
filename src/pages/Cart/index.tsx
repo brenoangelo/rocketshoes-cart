@@ -23,10 +23,9 @@ const Cart = (): JSX.Element => {
   const cartFormatted = cart.map(product => ({
     // TODO
     ...product,
-    price: formatPrice(product.price),
-    priceAmount: formatPrice(product.price * product.amount)
+    priceFormatted: formatPrice(product.price),
+    subTotal: formatPrice(product.price * product.amount)
   }))
-  
   const total =
     formatPrice(
       cart.reduce((sumTotal, product) => {
@@ -38,10 +37,12 @@ const Cart = (): JSX.Element => {
 
   function handleProductIncrement(product: Product) {
     // TODO
+    updateProductAmount({productId: product.id, amount: product.amount + 1})
   }
 
   function handleProductDecrement(product: Product) {
     // TODO
+    updateProductAmount({productId: product.id, amount: product.amount - 1})
   }
 
   function handleRemoveProduct(productId: number) {
@@ -69,7 +70,7 @@ const Cart = (): JSX.Element => {
             </td>
             <td>
               <strong>Tênis de Caminhada Leve Confortável</strong>
-              <span>{product.price}</span>
+              <span>{product.priceFormatted}</span>
             </td>
             <td>
               <div>
@@ -77,7 +78,7 @@ const Cart = (): JSX.Element => {
                   type="button"
                   data-testid="decrement-product"
                 disabled={product.amount <= 1}
-                // onClick={() => handleProductDecrement()}
+                onClick={() => handleProductDecrement(product)}
                 >
                   <MdRemoveCircleOutline size={20} />
                 </button>
@@ -90,14 +91,14 @@ const Cart = (): JSX.Element => {
                 <button
                   type="button"
                   data-testid="increment-product"
-                // onClick={() => handleProductIncrement()}
+                onClick={() => handleProductIncrement(product)}
                 >
                   <MdAddCircleOutline size={20} />
                 </button>
               </div>
             </td>
             <td>
-              <strong>{product.priceAmount}</strong>
+              <strong>{product.subTotal}</strong>
             </td>
             <td>
               <button

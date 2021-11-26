@@ -44,11 +44,6 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
       const currentAmount = productExists ? productExists.amount : 0
       const amount = currentAmount + 1
-
-      if(!productExists) {
-        toast.error('Erro ao adicionar o produto');
-        return;
-      }
       
       if(amount > stockAmount) {
        toast.error('Quantidade solicitada fora de estoque');
@@ -57,6 +52,11 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       
       const product = await api.get<Product>(`products/${productId}`)
       .then(response => response.data)
+
+      if(!product) {
+        toast.error('Erro na adição do produto')
+        return;
+      }
 
       if(productExists) {
         const index = updatedCart.findIndex(product => product.id === productExists.id)
@@ -73,7 +73,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
       toast.success('Produto adicionado com sucesso!')
     } catch {
-      toast.error('Erro ao adicionar o produto');
+      toast.error('Erro na adição do produto');
     }
   };
 
@@ -107,10 +107,10 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       const productStock = await api.get<Stock>(`stock/${productId}`)
       .then(response => response.data)
 
-      const productIndex = updatedCart.findIndex(product => product.id === productId)
-
-      if(productIndex === -1){
-        toast.error('Falha na atualização do produto')
+      const productExists = updatedCart.find(product => product.id === productId)
+      console.log(productExists)
+      if(!productExists){
+        toast.error('Erro na alteração de quantidade do produto')
         return;
       }
 
@@ -124,14 +124,17 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       }
       
       const productModify = {
-        ...updatedCart[productIndex],
+        ...productExists,
         amount: amount
       }
+      const productIndex = updatedCart
+        .findIndex(product => product.id === productModify.id)
+
       updatedCart.splice(productIndex, 1, productModify)
       setCart(updatedCart)
       localStorage.setItem('@RocketShoes:cart', JSON.stringify(updatedCart));
     } catch {
-      toast.error('Falha na atualização do produto')
+      toast.error('Erro na alteração de quantidade do produto')
     }
   };
 
